@@ -1,0 +1,6 @@
+User-agent: *
+Allow: /
+
+# SoftKormo — Software Company
+# Smart Software, Reliable Service
+Sitemap: https://softkormo.web.app/sitemap.xml

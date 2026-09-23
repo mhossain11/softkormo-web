@@ -1,0 +1,38 @@
+name: softkormo
+description: "SoftKormo — Smart Software, Reliable Service. Corporate website for a modern software company (Flutter Web, GetX, Firebase)."
+publish_to: 'none'
+
+version: 1.0.0+1
+
+environment:
+  sdk: ^3.10.1
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  cupertino_icons: ^1.0.8
+
+  # ---------------------------------------------------------- Firebase
+  firebase_core: ^4.15.0
+  cloud_firestore: ^6.10.0
+  firebase_analytics: ^12.6.0
+
+  # ------------------------------------------------- state / structure
+  get: ^4.7.3
+  get_it: ^9.3.0
+
+  # ----------------------------------------------------------- UI/SEO
+  google_fonts: ^8.2.1
+  web: ^1.1.1
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^6.0.0
+
+flutter:
+  uses-material-design: true
+
+  assets:
+    - assets/logo/

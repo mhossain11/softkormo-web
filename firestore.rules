@@ -1,0 +1,79 @@
+rules_version = '2';
+
+// ============================================================
+// SoftKormo Firestore security rules
+// Principle: deny by default, validate every write, allow the
+// public to read marketing content and create contact tickets
+// only.
+// ============================================================
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // -------------------------------------------------- helpers
+    function signedIn() {
+      return request.auth != null;
+    }
+
+    function isAdmin() {
+      return signedIn() && request.auth.token.admin == true;
+    }
+
+    function validString(field, maxLen) {
+      return field is string && field.size() <= maxLen;
+    }
+
+    function validEmail(field) {
+      return field is string
+        && field.size() <= 254
+        && field.matches('^[^@\\s]+@[^@\\s]+\\.[a-zA-Z]{2,}$');
+    }
+
+    // ------------------------------------------------ public CMS
+    // Readable by everyone, writable only by admins (CMS/console).
+    match /services/{doc} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    match /packages/{doc} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    match /projects/{doc} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    match /testimonials/{doc} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    match /blogs/{doc} {
+      allow read: if resource.data.status == 'published' || isAdmin();
+      allow write: if isAdmin();
+    }
+
+    // ------------------------------------------------- contacts
+    // Anyone may submit a ticket; nobody can read or edit them
+    // from the client (they are triaged in the console / by
+    // Cloud Functions with Admin SDK).
+    match /contacts/{doc} {
+      allow read, update, delete: if isAdmin();
+
+      allow create: if validString(request.resource.data.name, 100)
+        && validEmail(request.resource.data.email)
+        && validString(request.resource.data.phone, 30)
+        && validString(request.resource.data.service, 120)
+        && validString(request.resource.data.message, 5000)
+        && request.resource.data.message.size() >= 10
+        && request.resource.data.status == 'new';
+    }
+
+    // --------------------------------------------- deny the rest
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}
