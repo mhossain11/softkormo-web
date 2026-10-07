@@ -1,9 +1,11 @@
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import 'app.dart';
 import 'core/services/injection_container.dart';
 import 'core/themes/app_theme.dart';
+import 'firebase_options.dart';
 
 /// SoftKormo — corporate website entry point.
 ///
@@ -22,11 +24,17 @@ import 'core/themes/app_theme.dart';
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
+
   // Queue all font variants used by the light and dark themes.
   AppTheme.light();
   AppTheme.dark();
 
   var fontProblems = false;
+
+
 
   // Wait (bounded) for the queued fonts; never let a slow or offline CDN
   // block booting or surface an unhandled error.
